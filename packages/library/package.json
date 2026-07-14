@@ -1,0 +1,54 @@
+{
+  "name": "@vinctus/chat",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "React chat components — message bubbles, composer, and panel",
+  "homepage": "https://github.com/vinctustech/chat",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vinctustech/chat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vinctustech/chat/issues"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@ant-design/icons": "^5.0.0",
+    "antd": "^5.0.0",
+    "dayjs": "^1.11.0",
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "devDependencies": {
+    "@ant-design/icons": "^5.5.2",
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/react": "^18.3.14",
+    "antd": "^5.29.2",
+    "dayjs": "^1.11.13",
+    "react": "^18.3.1",
+    "rollup": "^3.25.0",
+    "rollup-plugin-dts": "^5.3.0",
+    "tslib": "^2.6.0",
+    "typescript": "~5.7.2"
+  },
+  "keywords": [
+    "react",
+    "chat"
+  ],
+  "author": "Vinctus Technologies Inc.",
+  "license": "ISC"
+}

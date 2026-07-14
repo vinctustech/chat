@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "chat",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=@vinctus/chat",
+    "dev": "npm run dev --workspace=demo",
+    "clean": "rm -rf node_modules && rm -rf packages/*/node_modules && rm -rf packages/*/dist",
+    "publish": "npm run build && npm publish --workspace=@vinctus/chat --access public"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.2"
+  }
+}
