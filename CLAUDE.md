@@ -1,0 +1,96 @@
+# CLAUDE.md — chat
+
+React chat component library, published as `@vinctus/chat`.
+
+Company-wide engineering practices (branch naming, commit format, code style,
+worktree and stage rules, Greptile triage) live in
+`shuttlecontrol-api/CLAUDE.md` and apply here. This file covers only what is
+specific to this repo.
+
+## Layout
+
+npm workspaces, mirroring the `calendar` repo:
+
+- `packages/library` — the published package (`@vinctus/chat`), built with rollup.
+- `packages/demo` — a Vite app for looking at it.
+
+```bash
+npm install      # root, installs both workspaces
+npm run build    # builds the library
+npm run dev      # runs the demo
+```
+
+## The rule this library exists under
+
+The customer app's trip chat is the design of record. `packages/demo/src/LiftedChat.tsx`
+is a **verbatim copy** of that chat's JSX from `shuttlecontrol-customer`'s
+TripTrack scene, kept so the library can be compared against it side by side in
+the demo, in light and dark.
+
+If you change how anything looks, you are changing what customers see. Do not
+"tidy" the styles — the odd bits (the invisible duplicate timestamp that
+reserves space in the bubble, the 18px badge, the `#007AFF` bubble) are load
+bearing.
+
+### Fix bugs for everyone; put features behind props
+
+**With no props passed beyond the essentials, these components render what
+`LiftedChat.tsx` renders** — that is what makes the side-by-side demo a drift
+detector. The line between a change that applies to everyone and one that has
+to be asked for:
+
+**Features go behind a prop, defaulted off.** The trip chat passes none of
+these and is unchanged:
+
+- `thinking` — the typing dots, for a sender that takes seconds to reply.
+- `preserveLineBreaks` — keeps newlines instead of letting CSS collapse them,
+  for a sender that writes numbered lists.
+
+**Some things apply to every host, with no prop.** These are the intended
+differences from the verbatim copy — the list is short on purpose:
+
+- `overflow-wrap: break-word` on the bubble. An email or URL is one unbreakable
+  word to CSS and renders past the bubble's edge without it. Text escaping its
+  bubble is broken in any chat, not a look the trip chat chose. It only affects
+  text that would otherwise overflow.
+- `autoFocus`, defaulted on. A chat you must click into before typing is a
+  papercut everywhere, so every host gets it. A host whose panel stays mounted
+  while hidden must pass its own open state — nothing remounts to re-fire the
+  focus. Note this pops the on-screen keyboard on mobile, which is the trip
+  chat's main setting.
+
+The test for which side a change falls on: would a reasonable person call the
+old behavior *wrong*, or merely *different*? Only the first justifies changing
+what a host already gets — and it is a product decision, not the library's to
+make alone. Default-on was chosen deliberately for both of the above; when in
+doubt, add the prop and default it off.
+
+## Who may use this library
+
+**Web hosts only** — `shuttlecontrol-web` (the account assistant) and
+`shuttlecontrol-customer` (the trip chat).
+
+**Never the driver app.** `shuttlecontrol-driver` is React Native, and these
+components are DOM plus Ant Design — `div`, `span`, `input`, `theme.useToken()`,
+an injected CSS keyframe. None of it renders under React Native, so this would
+not merely be a bad fit, it would not build.
+
+The temptation is real and worth naming: the driver app is the *other end* of
+the same rider-to-driver conversation, so sharing the chat components sounds
+obviously right. It isn't. The driver side keeps its own native chat UI. If the
+two ever need to look alike, that is a design problem to solve twice, not a
+component to share.
+
+## What belongs here, and what does not
+
+In: presentation, and state that is purely about presentation.
+
+Out: transport of any kind. No fetch, no Socket.IO, no endpoint knowledge, no
+unread-counting policy. Hosts differ — the customer app's chat rides a socket,
+the account assistant's rides HTTP — and the moment the library knows about one,
+it stops fitting the other.
+
+## Publishing
+
+`npm run publish` builds and publishes. Per company practice, Claude prepares
+the version bump, build and commit; a human runs the publish.
