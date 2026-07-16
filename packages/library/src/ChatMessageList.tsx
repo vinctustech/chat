@@ -77,7 +77,13 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
                 position: 'relative',
               }}
             >
-              <span style={{ fontSize: 14 }}>
+              {/* pre-wrap so newlines in a message survive: a chat message can
+                  be a numbered list, and CSS would otherwise collapse every
+                  line break into a space and run the list into one paragraph.
+                  It still wraps long lines normally, so a message without line
+                  breaks — every message the trip chat has ever sent — looks
+                  exactly as it did before. */}
+              <span style={{ fontSize: 14, whiteSpace: 'pre-wrap' }}>
                 {message.content}
                 <span style={{ fontSize: 10, opacity: 0 }}>
                   &nbsp;&nbsp;{dayjs(message.createdAt).format(timeFormat)}
