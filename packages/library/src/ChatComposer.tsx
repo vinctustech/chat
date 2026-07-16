@@ -23,9 +23,15 @@ export interface ChatComposerProps {
   // it before every message.
   //
   // On by default — a chat you have to click into before typing is a papercut
-  // in any chat, so every host gets this. A host whose panel stays mounted
-  // while hidden (a drawer, say) should pass its own open state rather than
-  // rely on the default, since nothing remounts to re-fire the focus.
+  // in any chat, so every host gets this. A host that mounts the panel fresh
+  // each time it is shown needs nothing: the mount does it.
+  //
+  // A host whose panel stays mounted while hidden — a drawer — must pass a flag
+  // instead, since nothing remounts to re-fire the focus. Pass a state that
+  // becomes true once the panel is actually ON SCREEN, not merely when it has
+  // been asked to open: an element still animating into place cannot take
+  // focus, and the call fails silently. With Ant Design's Drawer that means
+  // afterOpenChange, not the open prop itself.
   autoFocus?: boolean
 }
 
