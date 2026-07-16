@@ -4,7 +4,7 @@
 // Controlled, deliberately: the host owns the text, because the host is what
 // clears it when a send succeeds and puts it back when one fails.
 
-import { FC } from 'react'
+import { FC, useEffect, useRef } from 'react'
 import { theme } from 'antd'
 import { SendOutlined } from '@ant-design/icons'
 
@@ -17,6 +17,16 @@ export interface ChatComposerProps {
   // Stops sending while a message is in flight, or while the conversation is
   // busy — the assistant thinking, say.
   disabled?: boolean
+  // Keep the input focused whenever it is usable: you open a chat in order to
+  // type in it, and after a send the input is briefly disabled while the reply
+  // is composed, which drops focus and would otherwise make you click back into
+  // it before every message.
+  //
+  // On by default — a chat you have to click into before typing is a papercut
+  // in any chat, so every host gets this. A host whose panel stays mounted
+  // while hidden (a drawer, say) should pass its own open state rather than
+  // rely on the default, since nothing remounts to re-fire the focus.
+  autoFocus?: boolean
 }
 
 export const ChatComposer: FC<ChatComposerProps> = ({
@@ -26,9 +36,17 @@ export const ChatComposer: FC<ChatComposerProps> = ({
   placeholder = 'Type a message...',
   maxLength = 500,
   disabled = false,
+  autoFocus = true,
 }) => {
   const { token } = theme.useToken()
   const sendable = value.trim() !== '' && !disabled
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (autoFocus && !disabled) {
+      inputRef.current?.focus()
+    }
+  }, [autoFocus, disabled])
 
   return (
     <div
@@ -40,6 +58,7 @@ export const ChatComposer: FC<ChatComposerProps> = ({
       }}
     >
       <input
+        ref={inputRef}
         type="text"
         placeholder={placeholder}
         value={value}

@@ -36,6 +36,9 @@ export interface ChatPanelProps {
   // Keep newlines in a message instead of collapsing them. Off by default; see
   // ChatMessageList.
   preserveLineBreaks?: boolean
+  // Keep the input focused while it is usable. On by default; a panel that
+  // stays mounted while hidden should pass its own open state. See ChatComposer.
+  autoFocus?: boolean
 }
 
 export const ChatPanel: FC<ChatPanelProps> = ({
@@ -55,6 +58,7 @@ export const ChatPanel: FC<ChatPanelProps> = ({
   footer,
   thinking,
   preserveLineBreaks,
+  autoFocus,
 }) => {
   const { token } = theme.useToken()
 
@@ -97,6 +101,7 @@ export const ChatPanel: FC<ChatPanelProps> = ({
         placeholder={placeholder}
         maxLength={maxLength}
         disabled={disabled}
+        autoFocus={autoFocus}
       />
       {footer}
     </div>
