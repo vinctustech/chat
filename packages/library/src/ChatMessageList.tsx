@@ -132,6 +132,12 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
                 borderRadius: 18,
                 padding: '8px 12px',
                 position: 'relative',
+                // An email address or a URL is one long word to CSS, with
+                // nowhere legal to wrap, so it would render straight past the
+                // bubble's edge. Text escaping its bubble is broken in any
+                // chat, so this is fixed for every host rather than offered as
+                // a choice. It only affects text that would otherwise overflow.
+                overflowWrap: 'break-word',
               }}
             >
               <span
