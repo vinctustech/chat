@@ -28,6 +28,12 @@ export interface ChatMessageListProps {
   // a slow reply is indistinguishable from a broken one. Opt-in: a host that
   // has no such signal passes nothing and nothing is drawn.
   thinking?: boolean
+  // Keep newlines in a message instead of letting CSS collapse them into
+  // spaces. Needed by a sender that writes numbered lists — the account
+  // assistant does. Off by default, because the trip chat has always rendered
+  // messages with newlines collapsed and it is not this library's place to
+  // change what its customers see.
+  preserveLineBreaks?: boolean
 }
 
 // The dots need a keyframe, and the library ships no stylesheet, so it carries
@@ -80,6 +86,7 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
   autoScroll = true,
   empty,
   thinking = false,
+  preserveLineBreaks = false,
 }) => {
   const { token } = theme.useToken()
   const endRef = useRef<HTMLDivElement>(null)
@@ -127,13 +134,12 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
                 position: 'relative',
               }}
             >
-              {/* pre-wrap so newlines in a message survive: a chat message can
-                  be a numbered list, and CSS would otherwise collapse every
-                  line break into a space and run the list into one paragraph.
-                  It still wraps long lines normally, so a message without line
-                  breaks — every message the trip chat has ever sent — looks
-                  exactly as it did before. */}
-              <span style={{ fontSize: 14, whiteSpace: 'pre-wrap' }}>
+              <span
+                style={{
+                  fontSize: 14,
+                  ...(preserveLineBreaks ? { whiteSpace: 'pre-wrap' as const } : {}),
+                }}
+              >
                 {message.content}
                 <span style={{ fontSize: 10, opacity: 0 }}>
                   &nbsp;&nbsp;{dayjs(message.createdAt).format(timeFormat)}

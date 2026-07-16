@@ -33,6 +33,9 @@ export interface ChatPanelProps {
   footer?: ReactNode
   // Whether the other side is composing a reply — draws the typing dots.
   thinking?: boolean
+  // Keep newlines in a message instead of collapsing them. Off by default; see
+  // ChatMessageList.
+  preserveLineBreaks?: boolean
 }
 
 export const ChatPanel: FC<ChatPanelProps> = ({
@@ -51,6 +54,7 @@ export const ChatPanel: FC<ChatPanelProps> = ({
   empty,
   footer,
   thinking,
+  preserveLineBreaks,
 }) => {
   const { token } = theme.useToken()
 
@@ -84,6 +88,7 @@ export const ChatPanel: FC<ChatPanelProps> = ({
         autoScroll={autoScroll}
         empty={empty}
         thinking={thinking}
+        preserveLineBreaks={preserveLineBreaks}
       />
       <ChatComposer
         value={value}
