@@ -23,6 +23,53 @@ export interface ChatMessageListProps {
   // is closed should pass false, so opening it does not animate a jump.
   autoScroll?: boolean
   empty?: React.ReactNode
+  // Whether the other side is composing a reply. Shows the three dots every
+  // chat uses to say "your message landed, something is happening". Without it
+  // a slow reply is indistinguishable from a broken one. Opt-in: a host that
+  // has no such signal passes nothing and nothing is drawn.
+  thinking?: boolean
+}
+
+// The dots need a keyframe, and the library ships no stylesheet, so it carries
+// its own. Named to avoid colliding with anything in a host app.
+const typingAnimation = `
+@keyframes vinctus-chat-typing {
+  0%, 60%, 100% { opacity: 0.25 }
+  30% { opacity: 1 }
+}`
+
+const TypingBubble: FC = () => {
+  const { token } = theme.useToken()
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 12, marginBottom: 4 }}>
+      <style>{typingAnimation}</style>
+      <div
+        style={{
+          backgroundColor: token.colorFillSecondary,
+          borderRadius: 18,
+          padding: '10px 14px',
+          display: 'flex',
+          gap: 4,
+          alignItems: 'center',
+        }}
+      >
+        {[0, 1, 2].map((dot) => (
+          <span
+            key={dot}
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: '50%',
+              backgroundColor: token.colorText,
+              animation: 'vinctus-chat-typing 1.2s infinite',
+              animationDelay: `${dot * 0.15}s`,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  )
 }
 
 export const ChatMessageList: FC<ChatMessageListProps> = ({
@@ -32,17 +79,20 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
   colors,
   autoScroll = true,
   empty,
+  thinking = false,
 }) => {
   const { token } = theme.useToken()
   const endRef = useRef<HTMLDivElement>(null)
   const ownBubble = colors?.ownBubble ?? '#007AFF'
   const ownText = colors?.ownText ?? 'white'
 
+  // Scroll when the dots appear too, so the indicator is not stranded below the
+  // fold — the one place it would be useless.
   useEffect(() => {
     if (autoScroll && endRef.current) {
       endRef.current.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [messages, autoScroll])
+  }, [messages, autoScroll, thinking])
 
   return (
     <div
@@ -104,6 +154,7 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
           </div>
         )
       })}
+      {thinking && <TypingBubble />}
       <div ref={endRef} />
     </div>
   )

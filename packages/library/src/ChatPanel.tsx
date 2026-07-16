@@ -31,6 +31,8 @@ export interface ChatPanelProps {
   autoScroll?: boolean
   empty?: ReactNode
   footer?: ReactNode
+  // Whether the other side is composing a reply — draws the typing dots.
+  thinking?: boolean
 }
 
 export const ChatPanel: FC<ChatPanelProps> = ({
@@ -48,6 +50,7 @@ export const ChatPanel: FC<ChatPanelProps> = ({
   autoScroll,
   empty,
   footer,
+  thinking,
 }) => {
   const { token } = theme.useToken()
 
@@ -80,6 +83,7 @@ export const ChatPanel: FC<ChatPanelProps> = ({
         colors={colors}
         autoScroll={autoScroll}
         empty={empty}
+        thinking={thinking}
       />
       <ChatComposer
         value={value}
