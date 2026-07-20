@@ -36,6 +36,56 @@ export interface ChatMessageListProps {
   preserveLineBreaks?: boolean
 }
 
+// A url in a message is turned into a link you can click. This is for every
+// host, with no prop: if someone sends you a url — the account assistant citing
+// a help article, or one person to another in the trip chat — a link you cannot
+// click is broken, not a look anyone chose. It is the same reasoning that put
+// overflow-wrap on the bubble, and for the same reason (urls live in chat).
+//
+// The text is split on the url so the link is a real <a>, never injected HTML.
+// A url's own colour would vanish against the blue of your own bubble, so it
+// inherits the bubble's text colour and underlines to show it is a link.
+// Trailing sentence punctuation is kept out of the href.
+function linkify(text: string): React.ReactNode[] {
+  const nodes: React.ReactNode[] = []
+  const pattern = /(https?:\/\/[^\s]+)/g
+  let lastIndex = 0
+  let key = 0
+  let match = pattern.exec(text)
+
+  while (match !== null) {
+    const start = match.index
+    const full = match[0]
+    const trailing = full.match(/[.,;:!?)]+$/)?.[0] ?? ''
+    const url = trailing === '' ? full : full.slice(0, full.length - trailing.length)
+
+    if (start > lastIndex) {
+      nodes.push(text.slice(lastIndex, start))
+    }
+    nodes.push(
+      <a
+        key={key}
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ color: 'inherit', textDecoration: 'underline' }}
+      >
+        {url}
+      </a>,
+    )
+    key += 1
+    if (trailing !== '') {
+      nodes.push(trailing)
+    }
+    lastIndex = start + full.length
+    match = pattern.exec(text)
+  }
+  if (lastIndex < text.length) {
+    nodes.push(text.slice(lastIndex))
+  }
+  return nodes
+}
+
 // The dots need a keyframe, and the library ships no stylesheet, so it carries
 // its own. Named to avoid colliding with anything in a host app.
 const typingAnimation = `
@@ -146,7 +196,7 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
                   ...(preserveLineBreaks ? { whiteSpace: 'pre-wrap' as const } : {}),
                 }}
               >
-                {message.content}
+                {linkify(message.content)}
                 <span style={{ fontSize: 10, opacity: 0 }}>
                   &nbsp;&nbsp;{dayjs(message.createdAt).format(timeFormat)}
                 </span>

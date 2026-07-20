@@ -58,6 +58,13 @@ differences from the verbatim copy — the list is short on purpose:
   while hidden must pass its own open state — nothing remounts to re-fire the
   focus. Note this pops the on-screen keyboard on mobile, which is the trip
   chat's main setting.
+- Clickable urls. A `http(s)` url in a message is rendered as a link, for every
+  host, no prop. Even between two people, if you send a url you want the other
+  side to be able to click it — a url shown as dead text is broken, not a look
+  anyone chose. Same reasoning as `overflow-wrap`, and the same cause: urls live
+  in chat. It splits the text and renders a real `<a>` (never injected HTML), and
+  the link inherits the bubble's text colour with an underline, because a link's
+  own colour would disappear against your own bubble's blue.
 
 The test for which side a change falls on: would a reasonable person call the
 old behavior *wrong*, or merely *different*? Only the first justifies changing

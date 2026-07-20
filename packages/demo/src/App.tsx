@@ -38,6 +38,8 @@ const assistantMessages: ChatMessage[] = [
   { id: 'a3', content: 'I can add that. What is the make, model, plate, seat count and colour?', author: 'them', createdAt: today('09:16') },
   { id: 'a4', content: 'Ford Transit, SHT-4410, 12 seats, white.', author: 'me', createdAt: today('09:17') },
   { id: 'a5', content: "Here's the plan: add a white Ford Transit, plate SHT-4410, 12 seats, to Alpha Store. Shall I go ahead?", author: 'them', createdAt: today('09:17') },
+  { id: 'a6', content: 'Yes. Also, how do I set up a kiosk?', author: 'me', createdAt: today('09:18') },
+  { id: 'a7', content: 'Done — the van is added. For kiosks, see https://help.shuttlecontrol.com/en/articles/13367860-how-to-create-and-manage-kiosks', author: 'them', createdAt: today('09:18') },
 ]
 
 const Pane: FC<{ title: string; subtitle: string; children: React.ReactNode }> = ({
