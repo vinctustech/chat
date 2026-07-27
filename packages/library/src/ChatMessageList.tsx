@@ -162,57 +162,115 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
       {messages.length === 0 && empty}
       {messages.map((message, index, all) => {
         const previous = index > 0 ? all[index - 1] : null
-        const isNewSender = !previous || previous.author !== message.author
+        // A run from one sender sits tight together, and a change opens a gap.
+        // Who "one sender" is includes the label and the channel when a host
+        // supplies them: two different people both arriving as 'them' are not
+        // one run, and neither is the same sender switching from SMS to in-app.
+        // A host that passes neither compares undefined with undefined, so this
+        // is exactly the old author check.
+        const isNewSender =
+          !previous ||
+          previous.author !== message.author ||
+          previous.senderLabel !== message.senderLabel ||
+          previous.channelLabel !== message.channelLabel
         const mine = message.author === 'me'
+        // Drawn once at the top of a run rather than above every bubble —
+        // repeated on each line it reads as noise, and a run is by definition
+        // all the same sender and channel.
+        const meta = [message.senderLabel, message.channelLabel].filter(Boolean).join(' · ')
+        const showMeta = meta !== '' && isNewSender
+        const bubble = (
+          <div
+            style={{
+              // Capped at 75% of the list, except when a meta line is drawn —
+              // then the column wrapper carries the cap instead, so the label
+              // sits over the bubble rather than stretching past it.
+              maxWidth: showMeta ? '100%' : '75%',
+              backgroundColor: mine ? ownBubble : token.colorFillSecondary,
+              color: mine ? ownText : token.colorText,
+              // WhatsApp's bubble, near enough: a 7.5px corner rather than the
+              // near-pill 18px the customer app's chat uses, and its padding —
+              // roomier along the bottom, where the clock sits. See the note on
+              // the clock's offsets below, which follow this padding.
+              borderRadius: 7.5,
+              padding: '6px 9px 8px',
+              position: 'relative',
+              // An email address or a URL is one long word to CSS, with
+              // nowhere legal to wrap, so it would render straight past the
+              // bubble's edge. Text escaping its bubble is broken in any
+              // chat, so this is fixed for every host rather than offered as
+              // a choice. It only affects text that would otherwise overflow.
+              overflowWrap: 'break-word',
+            }}
+          >
+            <span
+              style={{
+                fontSize: 14,
+                // A tight bubble with loose lines inside it still reads as
+                // tall, so a multi-line message needs this to actually get
+                // shorter.
+                lineHeight: 1.35,
+                ...(preserveLineBreaks ? { whiteSpace: 'pre-wrap' as const } : {}),
+              }}
+            >
+              {linkify(message.content)}
+              <span style={{ fontSize: 10, opacity: 0 }}>
+                &nbsp;&nbsp;{dayjs(message.createdAt).format(timeFormat)}
+              </span>
+            </span>
+            <span
+              style={{
+                fontSize: 10,
+                opacity: 0.7,
+                position: 'absolute',
+                // The clock sits in the bubble's bottom-right corner, so these
+                // are the bubble's own padding. Changing one without the other
+                // either strands the time or lets the text run under it.
+                right: 9,
+                bottom: 5,
+              }}
+            >
+              {dayjs(message.createdAt).format(timeFormat)}
+            </span>
+          </div>
+        )
         return (
           <div
             key={message.id}
             style={{
               display: 'flex',
               justifyContent: mine ? 'flex-end' : 'flex-start',
-              marginTop: isNewSender ? 12 : 2,
-              marginBottom: 4,
+              marginTop: isNewSender ? 8 : 1,
+              marginBottom: 2,
             }}
           >
-            <div
-              style={{
-                maxWidth: '75%',
-                backgroundColor: mine ? ownBubble : token.colorFillSecondary,
-                color: mine ? ownText : token.colorText,
-                borderRadius: 18,
-                padding: '8px 12px',
-                position: 'relative',
-                // An email address or a URL is one long word to CSS, with
-                // nowhere legal to wrap, so it would render straight past the
-                // bubble's edge. Text escaping its bubble is broken in any
-                // chat, so this is fixed for every host rather than offered as
-                // a choice. It only affects text that would otherwise overflow.
-                overflowWrap: 'break-word',
-              }}
-            >
-              <span
+            {/* With no labels the bubble is rendered exactly as it always has
+                been, with no wrapper around it, so nothing moves for a host
+                that does not ask for them. */}
+            {showMeta ? (
+              <div
                 style={{
-                  fontSize: 14,
-                  ...(preserveLineBreaks ? { whiteSpace: 'pre-wrap' as const } : {}),
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: mine ? 'flex-end' : 'flex-start',
+                  maxWidth: '75%',
                 }}
               >
-                {linkify(message.content)}
-                <span style={{ fontSize: 10, opacity: 0 }}>
-                  &nbsp;&nbsp;{dayjs(message.createdAt).format(timeFormat)}
+                <span
+                  style={{
+                    fontSize: 10,
+                    color: token.colorTextSecondary,
+                    padding: '0 12px',
+                    marginBottom: 2,
+                  }}
+                >
+                  {meta}
                 </span>
-              </span>
-              <span
-                style={{
-                  fontSize: 10,
-                  opacity: 0.7,
-                  position: 'absolute',
-                  right: 12,
-                  bottom: 8,
-                }}
-              >
-                {dayjs(message.createdAt).format(timeFormat)}
-              </span>
-            </div>
+                {bubble}
+              </div>
+            ) : (
+              bubble
+            )}
           </div>
         )
       })}

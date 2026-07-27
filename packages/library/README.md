@@ -34,6 +34,38 @@ const messages: ChatMessage[] = [
 />
 ```
 
+## More than two sides to a conversation
+
+`author` says whether a message is yours or theirs, which is the whole story in
+a chat between two people. It is not the whole story in the dispatcher's trip
+chat, where the driver, the passenger and the system's own SMS all arrive as
+`them` and telling them apart is the point.
+
+Two optional fields on a message carry that, drawn in a small line above the
+bubble:
+
+```tsx
+const messages: ChatMessage[] = [
+  {
+    id: '1',
+    content: 'Your driver is on the way! ETA 15 min.',
+    author: 'them',
+    senderLabel: 'System',
+    channelLabel: 'SMS',
+    createdAt: '2026-07-14T07:40:00Z',
+  },
+]
+```
+
+Both are **display strings the host has already translated**, not codes the
+library maps to words. Hosts run their own i18n — the dispatcher app is English
+and French — and strings owned by this library could not be translated by the
+app showing them.
+
+The line is drawn once at the top of a run rather than above every bubble, and a
+change of either field starts a new run. Pass neither and nothing is drawn: a
+two-party chat looks exactly as it always has.
+
 ## What is deliberately NOT in it
 
 **Transport.** No fetch, no socket, no endpoints. The customer app's chat is

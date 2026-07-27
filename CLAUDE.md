@@ -65,6 +65,16 @@ differences from the verbatim copy — the list is short on purpose:
   in chat. It splits the text and renders a real `<a>` (never injected HTML), and
   the link inherits the bubble's text colour with an underline, because a link's
   own colour would disappear against your own bubble's blue.
+- A WhatsApp bubble rather than the customer app's: a `7.5px` corner instead of
+  the near-pill `18px`, `6px 9px 8px` of padding instead of `8px 12px`, `1.35`
+  line height, and the gaps between bubbles pulled in to match. The bottom is
+  the roomiest side because that is where the clock sits, and the clock's own
+  offsets follow that padding — change one without the other and the time is
+  either stranded or run under by the text. This one is a deliberate exception
+  to "do not change what customers see": it was asked for, so the library is now
+  the tighter design and `LiftedChat.tsx` is the looser one it came from. The
+  side-by-side therefore no longer matches on the bubble — that difference is
+  this entry, and everything else in the two panes should still line up.
 
 The test for which side a change falls on: would a reasonable person call the
 old behavior *wrong*, or merely *different*? Only the first justifies changing
