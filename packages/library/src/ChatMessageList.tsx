@@ -188,8 +188,12 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
               maxWidth: showMeta ? '100%' : '75%',
               backgroundColor: mine ? ownBubble : token.colorFillSecondary,
               color: mine ? ownText : token.colorText,
-              borderRadius: 18,
-              padding: '8px 12px',
+              // WhatsApp's bubble, near enough: a 7.5px corner rather than the
+              // near-pill 18px the customer app's chat uses, and its padding —
+              // roomier along the bottom, where the clock sits. See the note on
+              // the clock's offsets below, which follow this padding.
+              borderRadius: 7.5,
+              padding: '6px 9px 8px',
               position: 'relative',
               // An email address or a URL is one long word to CSS, with
               // nowhere legal to wrap, so it would render straight past the
@@ -202,6 +206,10 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
             <span
               style={{
                 fontSize: 14,
+                // A tight bubble with loose lines inside it still reads as
+                // tall, so a multi-line message needs this to actually get
+                // shorter.
+                lineHeight: 1.35,
                 ...(preserveLineBreaks ? { whiteSpace: 'pre-wrap' as const } : {}),
               }}
             >
@@ -215,8 +223,11 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
                 fontSize: 10,
                 opacity: 0.7,
                 position: 'absolute',
-                right: 12,
-                bottom: 8,
+                // The clock sits in the bubble's bottom-right corner, so these
+                // are the bubble's own padding. Changing one without the other
+                // either strands the time or lets the text run under it.
+                right: 9,
+                bottom: 5,
               }}
             >
               {dayjs(message.createdAt).format(timeFormat)}
@@ -229,8 +240,8 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
             style={{
               display: 'flex',
               justifyContent: mine ? 'flex-end' : 'flex-start',
-              marginTop: isNewSender ? 12 : 2,
-              marginBottom: 4,
+              marginTop: isNewSender ? 8 : 1,
+              marginBottom: 2,
             }}
           >
             {/* With no labels the bubble is rendered exactly as it always has
