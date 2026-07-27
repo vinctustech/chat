@@ -35,6 +35,10 @@ export interface ChatComposerProps {
   autoFocus?: boolean
 }
 
+// The height of both controls in the composer. They are one row and have to
+// match, so the number is written once rather than in each of them.
+const CONTROL_SIZE = 30
+
 export const ChatComposer: FC<ChatComposerProps> = ({
   value,
   onChange,
@@ -79,6 +83,13 @@ export const ChatComposer: FC<ChatComposerProps> = ({
         }}
         style={{
           flex: 1,
+          // Sized to the send button rather than to its own text, so the two
+          // controls sit as one row. Left to itself an input is a little taller
+          // than the button, which reads as the button having slipped. The
+          // border-box keeps the padding and border inside that height.
+          height: CONTROL_SIZE,
+          boxSizing: 'border-box',
+          minWidth: 0,
           border: `1px solid ${token.colorBorder}`,
           borderRadius: 9999,
           padding: '6px 12px',
@@ -97,8 +108,11 @@ export const ChatComposer: FC<ChatComposerProps> = ({
           color: 'white',
           border: 'none',
           borderRadius: '50%',
-          width: 30,
-          height: 30,
+          width: CONTROL_SIZE,
+          height: CONTROL_SIZE,
+          // Never let the row's squeeze flatten the circle into an oval; the
+          // input gives way instead. A chat can sit in a narrow column.
+          flexShrink: 0,
           cursor: sendable ? 'pointer' : 'not-allowed',
           display: 'flex',
           alignItems: 'center',

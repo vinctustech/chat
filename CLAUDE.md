@@ -65,6 +65,13 @@ differences from the verbatim copy — the list is short on purpose:
   in chat. It splits the text and renders a real `<a>` (never injected HTML), and
   the link inherits the bubble's text colour with an underline, because a link's
   own colour would disappear against your own bubble's blue.
+- The composer's input is the send button's height. Left to itself an input is
+  a little taller than the 30px button, so the two sit misaligned — visible in
+  `LiftedChat.tsx` too, since the customer app's composer has the same markup.
+  A control row whose halves do not line up is broken in any chat, not a look
+  anyone chose, so both now read one `CONTROL_SIZE`. The button also stops
+  shrinking, so a narrow column squeezes the input instead of flattening the
+  circle into an oval.
 - A WhatsApp bubble rather than the customer app's: a `7.5px` corner instead of
   the near-pill `18px`, `6px 9px 8px` of padding instead of `8px 12px`, `1.35`
   line height, and the gaps between bubbles pulled in to match. The bottom is
