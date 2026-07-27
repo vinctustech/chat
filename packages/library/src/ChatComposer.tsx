@@ -4,7 +4,7 @@
 // Controlled, deliberately: the host owns the text, because the host is what
 // clears it when a send succeeds and puts it back when one fails.
 
-import { FC, useEffect, useRef } from 'react'
+import { CSSProperties, FC, useEffect, useRef } from 'react'
 import { theme } from 'antd'
 import { SendOutlined } from '@ant-design/icons'
 
@@ -33,6 +33,11 @@ export interface ChatComposerProps {
   // focus, and the call fails silently. With Ant Design's Drawer that means
   // afterOpenChange, not the open prop itself.
   autoFocus?: boolean
+  // The space around the input and its button. The default is what the customer
+  // app's chat has always drawn. A host whose own container is already padded
+  // passes its own — `'8px 0 0 0'` to keep only the gap above the input and let
+  // the container supply the rest.
+  padding?: CSSProperties['padding']
 }
 
 // The height of both controls in the composer. They are one row and have to
@@ -47,6 +52,7 @@ export const ChatComposer: FC<ChatComposerProps> = ({
   maxLength = 500,
   disabled = false,
   autoFocus = true,
+  padding = 6,
 }) => {
   const { token } = theme.useToken()
   const sendable = value.trim() !== '' && !disabled
@@ -61,7 +67,7 @@ export const ChatComposer: FC<ChatComposerProps> = ({
   return (
     <div
       style={{
-        padding: 6,
+        padding,
         display: 'flex',
         gap: 6,
         alignItems: 'center',

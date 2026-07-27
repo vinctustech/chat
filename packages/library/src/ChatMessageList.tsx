@@ -8,7 +8,7 @@
 // short message's text runs underneath the clock. This is lifted verbatim from
 // the customer app, where the effect was arrived at by hand.
 
-import { FC, useEffect, useRef } from 'react'
+import { CSSProperties, FC, useEffect, useRef } from 'react'
 import { theme } from 'antd'
 import dayjs from 'dayjs'
 import { ChatColors, ChatMessage } from './types'
@@ -34,6 +34,11 @@ export interface ChatMessageListProps {
   // messages with newlines collapsed and it is not this library's place to
   // change what its customers see.
   preserveLineBreaks?: boolean
+  // The space around the messages. The default is what the customer app's chat
+  // has always drawn. A host whose own container is already padded — a tab pane
+  // with padding of its own — passes 0, so the two do not stack into a margin
+  // twice as wide as everything beside it.
+  padding?: CSSProperties['padding']
 }
 
 // A url in a message is turned into a link you can click. This is for every
@@ -137,6 +142,7 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
   empty,
   thinking = false,
   preserveLineBreaks = false,
+  padding = '10px 10px 0 10px',
 }) => {
   const { token } = theme.useToken()
   const endRef = useRef<HTMLDivElement>(null)
@@ -156,7 +162,7 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
       style={{
         maxHeight,
         overflowY: 'auto',
-        padding: '10px 10px 0 10px',
+        padding,
       }}
     >
       {messages.length === 0 && empty}
@@ -188,11 +194,11 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
               maxWidth: showMeta ? '100%' : '75%',
               backgroundColor: mine ? ownBubble : token.colorFillSecondary,
               color: mine ? ownText : token.colorText,
-              // WhatsApp's bubble, near enough: a 7.5px corner rather than the
-              // near-pill 18px the customer app's chat uses, and its padding —
-              // roomier along the bottom, where the clock sits. See the note on
-              // the clock's offsets below, which follow this padding.
-              borderRadius: 7.5,
+              // Between the near-pill 18px the customer app's chat uses and the
+              // 7.5px square of a WhatsApp bubble, which reads as boxy at this
+              // size. The padding below is WhatsApp's — roomier along the
+              // bottom, where the clock sits.
+              borderRadius: 12,
               padding: '6px 9px 8px',
               position: 'relative',
               // An email address or a URL is one long word to CSS, with
@@ -260,7 +266,6 @@ export const ChatMessageList: FC<ChatMessageListProps> = ({
                   style={{
                     fontSize: 10,
                     color: token.colorTextSecondary,
-                    padding: '0 12px',
                     marginBottom: 2,
                   }}
                 >
