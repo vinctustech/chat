@@ -10,6 +10,23 @@ export interface ChatMessage {
   author: 'me' | 'them'
   // ISO timestamp, or anything dayjs can read.
   createdAt: string
+  // Who sent it and how it reached the reader, drawn in a small line above the
+  // bubble. Both are optional and off unless supplied: a two-party chat needs
+  // neither, because 'me' and 'them' already say everything there is to say.
+  //
+  // They exist for a conversation with more than two sides, where 'them' is not
+  // one person. The dispatcher's trip chat is that case — a driver, the
+  // passenger, and the system's own SMS all arrive as 'them', and which is
+  // which matters.
+  //
+  // Both are display strings the host has already translated, not codes. The
+  // library never maps a code to words: hosts run their own i18n (the
+  // dispatcher app is English and French), and a library that owned these
+  // strings could not be translated by the app that shows them.
+  senderLabel?: string
+  // How the message travelled — 'SMS', 'In-app', 'Email'. Same rules as
+  // senderLabel: already translated, purely for display.
+  channelLabel?: string
 }
 
 // The colours the chat is drawn in. Everything else comes from the Ant Design

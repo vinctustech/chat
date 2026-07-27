@@ -1,7 +1,7 @@
 {
   "name": "@vinctus/chat",
   "type": "module",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "React chat components — message bubbles, composer, and panel",
   "homepage": "https://github.com/vinctustech/chat",
   "repository": {
