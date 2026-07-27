@@ -72,9 +72,11 @@ differences from the verbatim copy — the list is short on purpose:
   anyone chose, so both now read one `CONTROL_SIZE`. The button also stops
   shrinking, so a narrow column squeezes the input instead of flattening the
   circle into an oval.
-- A WhatsApp bubble rather than the customer app's: a `7.5px` corner instead of
-  the near-pill `18px`, `6px 9px 8px` of padding instead of `8px 12px`, `1.35`
-  line height, and the gaps between bubbles pulled in to match. The bottom is
+- A tighter bubble than the customer app's: a `12px` corner instead of the
+  near-pill `18px`, `6px 9px 8px` of padding instead of `8px 12px`, `1.35` line
+  height, and the gaps between bubbles pulled in to match. The padding is
+  WhatsApp's; the corner started there too, at `7.5px`, and was opened up
+  because a bubble that square reads as boxy at this size. The bottom is
   the roomiest side because that is where the clock sits, and the clock's own
   offsets follow that padding — change one without the other and the time is
   either stranded or run under by the text. This one is a deliberate exception
