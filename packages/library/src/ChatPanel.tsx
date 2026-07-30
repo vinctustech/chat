@@ -39,6 +39,11 @@ export interface ChatPanelProps {
   // Keep the input focused while it is usable. On by default; a panel that
   // stays mounted while hidden should pass its own open state. See ChatComposer.
   autoFocus?: boolean
+  // Sit flush inside a container that already frames it — a modal body. Drops
+  // the panel's own outer border, rounding and top margin, and its title bar,
+  // since the container supplies the frame and the title. Off by default; the
+  // trip chat, which stands on its own, does not pass it.
+  flush?: boolean
 }
 
 export const ChatPanel: FC<ChatPanelProps> = ({
@@ -59,31 +64,38 @@ export const ChatPanel: FC<ChatPanelProps> = ({
   thinking,
   preserveLineBreaks,
   autoFocus,
+  flush,
 }) => {
   const { token } = theme.useToken()
 
   return (
     <div
-      style={{
-        marginTop: 15,
-        border: `1px solid ${token.colorBorder}`,
-        borderRadius: 5,
-        backgroundColor: token.colorBgContainer,
-      }}
+      style={
+        flush
+          ? { backgroundColor: token.colorBgContainer }
+          : {
+              marginTop: 15,
+              border: `1px solid ${token.colorBorder}`,
+              borderRadius: 5,
+              backgroundColor: token.colorBgContainer,
+            }
+      }
     >
-      <div
-        style={{
-          backgroundColor: token.colorBgLayout,
-          padding: 10,
-          borderTopLeftRadius: 5,
-          borderTopRightRadius: 5,
-          fontWeight: 'bold',
-          borderBottom: `1px solid ${token.colorBorder}`,
-          color: token.colorText,
-        }}
-      >
-        {title}
-      </div>
+      {!flush && (
+        <div
+          style={{
+            backgroundColor: token.colorBgLayout,
+            padding: 10,
+            borderTopLeftRadius: 5,
+            borderTopRightRadius: 5,
+            fontWeight: 'bold',
+            borderBottom: `1px solid ${token.colorBorder}`,
+            color: token.colorText,
+          }}
+        >
+          {title}
+        </div>
+      )}
       <ChatMessageList
         messages={messages}
         timeFormat={timeFormat}
