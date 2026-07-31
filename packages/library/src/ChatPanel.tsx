@@ -44,6 +44,9 @@ export interface ChatPanelProps {
   // since the container supplies the frame and the title. Off by default; the
   // trip chat, which stands on its own, does not pass it.
   flush?: boolean
+  // The colour of the strip the input and its button sit on. Transparent by
+  // default; a host can set it to tie the composer to an adjacent surface.
+  composerBackground?: string
 }
 
 export const ChatPanel: FC<ChatPanelProps> = ({
@@ -65,6 +68,7 @@ export const ChatPanel: FC<ChatPanelProps> = ({
   preserveLineBreaks,
   autoFocus,
   flush,
+  composerBackground,
 }) => {
   const { token } = theme.useToken()
 
@@ -114,6 +118,7 @@ export const ChatPanel: FC<ChatPanelProps> = ({
         maxLength={maxLength}
         disabled={disabled}
         autoFocus={autoFocus}
+        background={composerBackground}
       />
       {footer}
     </div>

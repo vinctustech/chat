@@ -38,6 +38,10 @@ export interface ChatComposerProps {
   // passes its own — `'8px 0 0 0'` to keep only the gap above the input and let
   // the container supply the rest.
   padding?: CSSProperties['padding']
+  // The colour of the strip the input and its button sit on. Transparent by
+  // default — the customer app lets the panel behind it show through. A host
+  // can set it to tie the composer to an adjacent surface.
+  background?: CSSProperties['background']
 }
 
 // The height of both controls in the composer. They are one row and have to
@@ -53,6 +57,7 @@ export const ChatComposer: FC<ChatComposerProps> = ({
   disabled = false,
   autoFocus = true,
   padding = 6,
+  background,
 }) => {
   const { token } = theme.useToken()
   const sendable = value.trim() !== '' && !disabled
@@ -68,6 +73,7 @@ export const ChatComposer: FC<ChatComposerProps> = ({
     <div
       style={{
         padding,
+        background,
         display: 'flex',
         gap: 6,
         alignItems: 'center',
