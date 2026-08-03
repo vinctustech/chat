@@ -25,6 +25,14 @@ export interface ChatPanelProps {
   placeholder?: string
   maxLength?: number
   disabled?: boolean
+  // A conversation that can be read but not added to: the composer is not drawn
+  // at all, and what was said stays there to read.
+  //
+  // Distinct from `disabled`, which is for a composer that is momentarily
+  // unusable — a send in flight, an assistant thinking — and comes back. This is
+  // for a thread that is closed for good, as a finished trip's is to the
+  // dispatcher reading it back out of the history.
+  readOnly?: boolean
   timeFormat?: string
   maxHeight?: number | string
   colors?: ChatColors
@@ -58,6 +66,7 @@ export const ChatPanel: FC<ChatPanelProps> = ({
   placeholder,
   maxLength,
   disabled,
+  readOnly,
   timeFormat,
   maxHeight,
   colors,
@@ -110,16 +119,18 @@ export const ChatPanel: FC<ChatPanelProps> = ({
         thinking={thinking}
         preserveLineBreaks={preserveLineBreaks}
       />
-      <ChatComposer
-        value={value}
-        onChange={onChange}
-        onSend={onSend}
-        placeholder={placeholder}
-        maxLength={maxLength}
-        disabled={disabled}
-        autoFocus={autoFocus}
-        background={composerBackground}
-      />
+      {!readOnly && (
+        <ChatComposer
+          value={value}
+          onChange={onChange}
+          onSend={onSend}
+          placeholder={placeholder}
+          maxLength={maxLength}
+          disabled={disabled}
+          autoFocus={autoFocus}
+          background={composerBackground}
+        />
+      )}
       {footer}
     </div>
   )

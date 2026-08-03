@@ -66,6 +66,21 @@ The line is drawn once at the top of a run rather than above every bubble, and a
 change of either field starts a new run. Pass neither and nothing is drawn: a
 two-party chat looks exactly as it always has.
 
+## A conversation you can read but not add to
+
+`readOnly` on `ChatPanel` draws the thread without a composer. Everything else
+stays: the title, the messages, the labels, the scroll.
+
+```tsx
+<ChatPanel title="Trip #4821" messages={messages} readOnly {...rest} />
+```
+
+It is not `disabled`. That one is for a composer that is briefly unusable and
+comes back — a send in flight, an assistant thinking — and it leaves the input
+in place. `readOnly` is for a thread that is closed for good: a finished trip's
+chat, read back out of the dispatcher's history, where a composer would offer to
+send a message nobody will ever receive.
+
 ## What is deliberately NOT in it
 
 **Transport.** No fetch, no socket, no endpoints. The customer app's chat is
